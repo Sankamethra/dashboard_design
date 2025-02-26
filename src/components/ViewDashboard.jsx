@@ -4,6 +4,10 @@ import FilterInput from './FilterInput';
 import ChartComponent from './ChartComponent';
 
 function ViewDashboard({ dashboard, onEdit }) {
+  const handleFilterChange = () => {
+    // No-op function since we're in view mode
+  };
+
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, p: 2, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -28,8 +32,10 @@ function ViewDashboard({ dashboard, onEdit }) {
                   type={filter.type}
                   value={filter.value}
                   label={filter.label}
-                  onChange={() => {}}
-                  disabled
+                  onChange={handleFilterChange}
+                  onLabelChange={handleFilterChange}
+                  onKeyChange={handleFilterChange}
+                  disabled={true}
                 />
               </Box>
             ))}

@@ -127,11 +127,6 @@ function DashboardDesigner() {
     setOpenSnackbar(true);
   };
 
-  const handlePreviewDashboard = (dashboard) => {
-    setCurrentDashboard({...dashboard});
-    // Implement preview functionality as needed
-  };
-  
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };

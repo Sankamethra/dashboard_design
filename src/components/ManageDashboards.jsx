@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 
-function ManageDashboards({ dashboards, onEdit, onDelete, onPreview, onNew }) {
+function ManageDashboards({ dashboards, onEdit, onDelete, onView, onNew }) {
   return (
     <Box sx={{ p: 3, width: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -21,7 +21,7 @@ function ManageDashboards({ dashboards, onEdit, onDelete, onPreview, onNew }) {
               key={dashboard.id}
               secondaryAction={
                 <Box>
-                  <IconButton edge="end" onClick={() => onPreview(dashboard)}>
+                  <IconButton edge="end" onClick={() => onView(dashboard)}>
                     <VisibilityIcon />
                   </IconButton>
                   <IconButton edge="end" onClick={() => onEdit(dashboard)}>
