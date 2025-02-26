@@ -2,10 +2,17 @@ import { Box, Paper, Typography, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ChartComponent from './ChartComponent';
 import DynamicForm from './DynamicForm';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function ViewDashboard({ dashboard, onEdit }) {
   const [filterValues, setFilterValues] = useState(dashboard.filters);
+  const [chartData, setChartData] = useState(dashboard.charts);
+
+  // Update state when dashboard changes
+  useEffect(() => {
+    setFilterValues(dashboard.filters);
+    setChartData(dashboard.charts);
+  }, [dashboard]);
 
   const handleFilterChange = (filterId, value) => {
     setFilterValues(prev => prev.map(filter => 
@@ -35,15 +42,14 @@ function ViewDashboard({ dashboard, onEdit }) {
         />
       )}
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {dashboard.charts.map((chart) => (
-          <Paper key={chart.id} sx={{ p: 2, width: '100%' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {chartData.map((chart) => (
+          <Paper key={chart.id} sx={{ p: 2 }}>
             <ChartComponent
               type={chart.type}
               title={chart.title}
-              xAxis={chart.xAxis}
-              yAxis={chart.yAxis}
-              chartKey={chart.key}
+              data={chart.data}
+              config={chart.config}
             />
           </Paper>
         ))}

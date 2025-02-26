@@ -3,6 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterInput from './FilterInput';
 import ChartComponent from './ChartComponent';
+import ChartInput from './ChartInput';
 
 function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
   const { setNodeRef: setFilterRef } = useDroppable({
@@ -102,67 +103,51 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
       </Paper>
 
       {/* Chart Drop Area */}
-      <Paper sx={{ p: 2, flex: 1 }}>
+      <Paper sx={{ p: 2 }}>
         <Typography variant="h6" gutterBottom>Charts</Typography>
         <Box
           ref={setChartRef}
           sx={{
             minHeight: 100,
             p: 2,
-            bgcolor: 'background.default',
             border: '2px dashed',
-            borderColor: 'grey.300',
-            borderRadius: 1
+            borderColor: 'divider',
+            borderRadius: 1,
+            bgcolor: '#f5f5f5',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
           }}
         >
           {currentDashboard.charts.map((chart) => (
-            <Paper
-              key={chart.id}
-              elevation={1}
-              sx={{ mb: 2, p: 2, position: 'relative' }}
-            >
+            <Paper key={chart.id} sx={{ p: 2, position: 'relative' }}>
               <IconButton
                 size="small"
+                sx={{ position: 'absolute', top: 8, right: 8 }}
                 onClick={() => handleRemoveChart(chart.id)}
-                sx={{ position: 'absolute', right: 8, top: 8 }}
               >
                 <DeleteIcon />
               </IconButton>
-              <Box sx={{ mb: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <TextField
-                  size="small"
-                  label="Title"
-                  value={chart.title}
-                  onChange={(e) => handleChartChange(chart.id, { title: e.target.value })}
-                />
-                <TextField
-                  size="small"
-                  label="Key"
-                  value={chart.key}
-                  onChange={(e) => handleChartChange(chart.id, { key: e.target.value })}
-                />
-                <TextField
-                  size="small"
-                  label="X Axis"
-                  value={chart.xAxis}
-                  onChange={(e) => handleChartChange(chart.id, { xAxis: e.target.value })}
-                />
-                <TextField
-                  size="small"
-                  label="Y Axis"
-                  value={chart.yAxis}
-                  onChange={(e) => handleChartChange(chart.id, { yAxis: e.target.value })}
+              <ChartInput
+                type={chart.type}
+                value={chart}
+                onChange={(updates) => handleChartChange(chart.id, updates)}
+              />
+              <Box sx={{ mt: 2 }}>
+                <ChartComponent
+                  type={chart.type}
+                  title={chart.title}
+                  data={chart.data}
+                  config={chart.config}
                 />
               </Box>
-              <ChartComponent
-                type={chart.type}
-                title={chart.title}
-                chartKey={chart.key}
-                xAxis={chart.xAxis}
-                yAxis={chart.yAxis}
-              />
             </Paper>
           ))}
+          {currentDashboard.charts.length === 0 && (
+            <Typography color="text.secondary" align="center">
+              Drag and drop charts here
+            </Typography>
+          )}
         </Box>
       </Paper>
 

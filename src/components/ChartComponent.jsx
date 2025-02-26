@@ -1,101 +1,101 @@
 import { Box, Typography } from '@mui/material';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { useState, useEffect } from 'react';
+import { LineChart, Line, PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-function ChartComponent({ type, xAxis, yAxis, title, chartKey }) {
-  const [chartData, setChartData] = useState([]);
-
-  useEffect(() => {
-    // Generate sample data based on x and y axis values
-    const generateData = () => {
-      if (!xAxis || !yAxis) return [];
-
-      // Generate sample data points
-      return Array.from({ length: 6 }, (_, i) => ({
-        [xAxis]: i + 1,  // X-axis values (1,2,3,4,5,6)
-        [yAxis]: Math.floor(Math.random() * (parseInt(yAxis) || 100))  // Y-axis values up to the specified y-axis value
-      }));
-    };
-
-    setChartData(generateData());
-  }, [xAxis, yAxis]);
-
-  if (!chartData.length || !xAxis || !yAxis) {
-    return (
-      <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography color="text.secondary">
-          Please provide X-Axis and Y-Axis values
-        </Typography>
-      </Box>
-    );
-  }
+function ChartComponent({ type, title, data, config }) {
+  console.log('Chart render:', { type, title, data, config });
 
   const renderChart = () => {
     switch (type) {
       case 'line':
         return (
-          <ResponsiveContainer width="100%" height={350}>
-            <LineChart data={chartData}>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
-                dataKey={xAxis}
-                label={{ value: xAxis, position: 'bottom' }}
+                dataKey={config.xAxisKey} 
+                label={{ value: config.xAxisLabel, position: 'bottom' }}
+                domain={config.xAxisDomain || ['auto', 'auto']}
               />
-              <YAxis 
-                label={{ value: yAxis, angle: -90, position: 'left' }}
-                domain={[0, parseInt(yAxis) || 'auto']}
+              <YAxis
+                label={{ value: config.yAxisLabel, angle: -90, position: 'left' }}
+                domain={config.yAxisDomain || ['auto', 'auto']}
               />
               <Tooltip />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey={yAxis}
-                name={yAxis}
-                stroke="#8884d8"
-              />
+              {config.lines.map((line, index) => (
+                <Line
+                  key={index}
+                  type="monotone"
+                  dataKey={line.key}
+                  name={line.label}
+                  stroke={line.color || `#${Math.floor(Math.random()*16777215).toString(16)}`}
+                  dot={{ r: 4 }}
+                />
+              ))}
             </LineChart>
+          </ResponsiveContainer>
+        );
+
+      case 'pie':
+        return (
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey={config.valueKey}
+                nameKey={config.labelKey}
+                cx="50%"
+                cy="50%"
+                outerRadius={150}
+                fill="#8884d8"
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              />
+              <Tooltip />
+              <Legend />
+            </PieChart>
           </ResponsiveContainer>
         );
 
       case 'bar':
         return (
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={chartData}>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
-                dataKey={xAxis}
-                label={{ value: xAxis, position: 'bottom' }}
+                dataKey={config.xAxisKey}
+                label={{ value: config.xAxisLabel, position: 'bottom' }}
               />
-              <YAxis 
-                label={{ value: yAxis, angle: -90, position: 'left' }}
-                domain={[0, parseInt(yAxis) || 'auto']}
+              <YAxis
+                label={{ value: config.yAxisLabel, angle: -90, position: 'left' }}
               />
               <Tooltip />
               <Legend />
-              <Bar 
-                dataKey={yAxis}
-                name={yAxis}
-                fill="#8884d8"
-              />
+              {config.bars.map((bar, index) => (
+                <Bar
+                  key={index}
+                  dataKey={bar.key}
+                  name={bar.label}
+                  fill={bar.color || `#${Math.floor(Math.random()*16777215).toString(16)}`}
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         );
 
-      case 'pie':
       case 'donut':
         return (
-          <ResponsiveContainer width="100%" height={350}>
+          <ResponsiveContainer width="100%" height={400}>
             <PieChart>
               <Pie
-                data={chartData}
-                dataKey={yAxis}
-                nameKey={xAxis}
+                data={data}
+                dataKey={config.valueKey}
+                nameKey={config.labelKey}
                 cx="50%"
                 cy="50%"
-                innerRadius={type === 'donut' ? 60 : 0}
-                outerRadius={120}
+                innerRadius={60}
+                outerRadius={150}
                 fill="#8884d8"
-                label
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
               />
               <Tooltip />
               <Legend />
@@ -104,20 +104,20 @@ function ChartComponent({ type, xAxis, yAxis, title, chartKey }) {
         );
 
       default:
-        return (
-          <Box sx={{ p: 2, textAlign: 'center' }}>
-            <Typography color="error">Invalid chart type</Typography>
-          </Box>
-        );
+        return null;
     }
   };
 
   return (
-    <Box sx={{ width: '100%', height: 400, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-      <Typography variant="h6" align="center" gutterBottom>
-        {title || 'Chart Title'}
+    <Box>
+      <Typography variant="h6" gutterBottom align="center">
+        {title}
       </Typography>
-      {renderChart()}
+      {data && data.length > 0 ? renderChart() : (
+        <Typography color="text.secondary" align="center">
+          No data available
+        </Typography>
+      )}
     </Box>
   );
 }

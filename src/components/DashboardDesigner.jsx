@@ -82,10 +82,18 @@ function DashboardDesigner() {
         id: uuidv4(),
         type: chartType,
         title: '',
-        key: '',
-        xAxis: '',
-        yAxis: '',
-        data: []
+        data: [],
+        config: {
+          xAxisLabel: '',
+          yAxisLabel: '',
+          xAxisKey: 'x',
+          yAxisKey: 'y',
+          lines: [{ key: 'y', label: 'Value' }],  // for line chart
+          bars: [{ key: 'y', label: 'Value' }],   // for bar chart
+          valueKey: 'value',   // for pie and donut charts
+          labelKey: 'label',   // for pie and donut charts
+          innerRadius: chartType === 'donut' ? 60 : 0  // specific to donut chart
+        }
       };
 
       setCurrentDashboard(prev => ({
@@ -104,7 +112,7 @@ function DashboardDesigner() {
       return;
     }
 
-    // Updated filter validation
+    // Validate filters
     const isFiltersValid = currentDashboard.filters.every(filter => {
       // Basic validation for all filters
       if (!filter.label) return false;
@@ -113,12 +121,15 @@ function DashboardDesigner() {
       switch (filter.type) {
         case 'select':
         case 'radio':
-          return filter.config?.options && filter.config.options.length > 0 && 
+          return filter.config?.options && 
+                 filter.config.options.length > 0 && 
                  filter.config.options.every(option => option.trim() !== '');
         case 'input':
+          return true; // Only label is required
         case 'switch':
+          return true; // Only label is required
         case 'dateRange':
-          return true; // These don't need additional validation
+          return true; // Only label is required
         default:
           return true;
       }
@@ -129,9 +140,46 @@ function DashboardDesigner() {
       return;
     }
 
+    // Validate charts - make this validation optional if you want to save without chart data
+    const hasCharts = currentDashboard.charts.length > 0;
+    if (hasCharts) {
+      const isChartsValid = currentDashboard.charts.every(chart => {
+        return chart.title && chart.data && chart.data.length > 0;
+      });
+
+      if (!isChartsValid) {
+        setError('Please ensure all charts have titles and data points');
+        return;
+      }
+    }
+
     const dashboardToSave = {
       ...currentDashboard,
-      id: currentDashboard.id || uuidv4()
+      id: currentDashboard.id || uuidv4(),
+      filters: currentDashboard.filters.map(filter => ({
+        ...filter,
+        config: {
+          ...filter.config,
+          placeholder: `Enter ${filter.label}`,
+          required: true
+        }
+      })),
+      charts: currentDashboard.charts.map(chart => ({
+        ...chart,
+        data: chart.data || [],
+        config: {
+          ...chart.config,
+          xAxisLabel: chart.config?.xAxisLabel || '',
+          yAxisLabel: chart.config?.yAxisLabel || '',
+          xAxisKey: chart.config?.xAxisKey || 'x',
+          yAxisKey: chart.config?.yAxisKey || 'y',
+          lines: chart.config?.lines || [{ key: 'y', label: 'Value' }],
+          bars: chart.config?.bars || [{ key: 'y', label: 'Value' }],
+          valueKey: chart.config?.valueKey || 'value',
+          labelKey: chart.config?.labelKey || 'label',
+          innerRadius: chart.type === 'donut' ? 60 : 0
+        }
+      }))
     };
 
     setDashboards(prev => {
