@@ -278,7 +278,25 @@ function FilterInput({ type, value, onChange, label, onLabelChange, onKeyChange,
     }
   };
 
-  return renderInput();
+  return (
+    <Box sx={{ 
+      p: 2,
+      borderRadius: 2,
+      bgcolor: '#fff',
+      '& .MuiTextField-root': {
+        mb: 2
+      },
+      '& .MuiInputBase-root': {
+        borderRadius: 1,
+        bgcolor: '#f8f9fa'
+      },
+      '& .MuiInputLabel-root': {
+        color: '#5c6bc0'
+      }
+    }}>
+      {renderInput()}
+    </Box>
+  );
 }
 
 export default FilterInput; 

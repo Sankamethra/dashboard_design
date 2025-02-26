@@ -23,43 +23,106 @@ function DraggableItem({ id, type, children }) {
         mb: 1,
         bgcolor: 'white',
         borderRadius: 1,
-        boxShadow: 1,
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
         cursor: 'grab',
         userSelect: 'none',
-        '&:hover': { bgcolor: 'action.hover' },
-        '&:active': { cursor: 'grabbing' }
+        transition: 'all 0.2s',
+        '&:hover': { 
+          bgcolor: '#f5f5f5',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+          transform: 'translateY(-2px)'
+        },
+        '&:active': { 
+          cursor: 'grabbing',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          transform: 'translateY(0)'
+        }
       }}
     >
-      {children}
+      <Typography variant="body2" sx={{ color: '#424242' }}>
+        {children}
+      </Typography>
     </Box>
   );
 }
 
 function RightSideArea({ currentDashboard, setCurrentDashboard }) {
   return (
-    <Paper sx={{ width: 300, p: 2, height: '100%', overflow: 'auto' }}>
+    <Paper sx={{ 
+      width: 280, 
+      p: 3, 
+      height: '100%', 
+      overflow: 'auto',
+      bgcolor: '#fff',
+      borderLeft: '1px solid',
+      borderColor: 'divider'
+    }}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" gutterBottom>Dashboard Settings</Typography>
-        <TextField
-          fullWidth
-          size="small"
-          label="Dashboard Title"
-          value={currentDashboard.title}
-          onChange={(e) => setCurrentDashboard(prev => ({ ...prev, title: e.target.value }))}
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          fullWidth
-          size="small"
-          label="API Endpoint URL"
-          value={currentDashboard.apiUrl}
-          onChange={(e) => setCurrentDashboard(prev => ({ ...prev, apiUrl: e.target.value }))}
-        />
+        <Typography 
+          variant="h6" 
+          gutterBottom 
+          sx={{ 
+            color: '#1a237e',
+            fontWeight: 600,
+            mb: 2
+          }}
+        >
+          Dashboard Settings
+        </Typography>
+        <Box sx={{ 
+          bgcolor: '#f8f9fa', 
+          p: 2, 
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: 'divider'
+        }}>
+          <TextField
+            fullWidth
+            size="small"
+            label="Dashboard Title"
+            value={currentDashboard.title}
+            onChange={(e) => setCurrentDashboard(prev => ({ ...prev, title: e.target.value }))}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                bgcolor: '#fff'
+              }
+            }}
+          />
+          <TextField
+            fullWidth
+            size="small"
+            label="API Endpoint URL"
+            value={currentDashboard.apiUrl}
+            onChange={(e) => setCurrentDashboard(prev => ({ ...prev, apiUrl: e.target.value }))}
+            sx={{ 
+              '& .MuiOutlinedInput-root': {
+                bgcolor: '#fff'
+              }
+            }}
+          />
+        </Box>
       </Box>
 
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" gutterBottom>Filter Components</Typography>
-        <Box sx={{ bgcolor: '#f5f5f5', p: 1, borderRadius: 1 }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom 
+          sx={{ 
+            color: '#1a237e',
+            fontWeight: 600,
+            mb: 2
+          }}
+        >
+          Filter Components
+        </Typography>
+        <Box sx={{ 
+          bgcolor: '#f8f9fa', 
+          p: 2, 
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: 'divider'
+        }}>
           {filterComponents.map((component) => (
             <DraggableItem 
               key={component.id} 
@@ -73,8 +136,24 @@ function RightSideArea({ currentDashboard, setCurrentDashboard }) {
       </Box>
 
       <Box>
-        <Typography variant="h6" gutterBottom>Chart Components</Typography>
-        <Box sx={{ bgcolor: '#f5f5f5', p: 1, borderRadius: 1 }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom 
+          sx={{ 
+            color: '#1a237e',
+            fontWeight: 600,
+            mb: 2
+          }}
+        >
+          Chart Components
+        </Typography>
+        <Box sx={{ 
+          bgcolor: '#f8f9fa', 
+          p: 2, 
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: 'divider'
+        }}>
           {chartComponents.map((component) => (
             <DraggableItem 
               key={component.id} 

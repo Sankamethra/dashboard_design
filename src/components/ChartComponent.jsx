@@ -1,5 +1,10 @@
 import { Box, Typography } from '@mui/material';
-import { LineChart, Line, PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+
+const CHART_COLORS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
+  '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#2ECC71'
+];
 
 function ChartComponent({ type, title, data, config }) {
   console.log('Chart render:', { type, title, data, config });
@@ -37,6 +42,7 @@ function ChartComponent({ type, title, data, config }) {
         );
 
       case 'pie':
+      case 'donut':
         return (
           <ResponsiveContainer width="100%" height={400}>
             <PieChart>
@@ -46,10 +52,17 @@ function ChartComponent({ type, title, data, config }) {
                 nameKey={config.labelKey}
                 cx="50%"
                 cy="50%"
+                innerRadius={type === 'donut' ? 60 : 0}
                 outerRadius={150}
-                fill="#8884d8"
                 label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={CHART_COLORS[index % CHART_COLORS.length]}
+                  />
+                ))}
+              </Pie>
               <Tooltip />
               <Legend />
             </PieChart>
@@ -82,39 +95,43 @@ function ChartComponent({ type, title, data, config }) {
           </ResponsiveContainer>
         );
 
-      case 'donut':
-        return (
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
-              <Pie
-                data={data}
-                dataKey={config.valueKey}
-                nameKey={config.labelKey}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={150}
-                fill="#8884d8"
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-              />
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        );
-
       default:
         return null;
     }
   };
 
   return (
-    <Box>
-      <Typography variant="h6" gutterBottom align="center">
+    <Box sx={{ 
+      p: 3,
+      borderRadius: 2,
+      bgcolor: '#fff',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+      '& .recharts-wrapper': {
+        mb: 2
+      }
+    }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        align="center"
+        sx={{ 
+          color: '#1a237e',
+          fontWeight: 600,
+          mb: 3
+        }}
+      >
         {title}
       </Typography>
-      {data && data.length > 0 ? renderChart() : (
-        <Typography color="text.secondary" align="center">
+      {data && data.length > 0 ? (
+        <ResponsiveContainer width="100%" height={400}>
+          {renderChart()}
+        </ResponsiveContainer>
+      ) : (
+        <Typography 
+          color="text.secondary" 
+          align="center"
+          sx={{ py: 8 }}
+        >
           No data available
         </Typography>
       )}

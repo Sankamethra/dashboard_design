@@ -51,35 +51,75 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
       flex: 1, 
       display: 'flex',
       flexDirection: 'column',
-      gap: 2,
+      gap: 3,
       height: '100%',
       overflow: 'auto',
-      p: 2
+      p: 3,
+      bgcolor: '#f5f7fa'
     }}>
-      {error && <Alert severity="error">{error}</Alert>}
-      
+      {error && (
+        <Alert severity="error" sx={{ borderRadius: 2, boxShadow: 1 }}>
+          {error}
+        </Alert>
+      )}
+
       {/* Filter Drop Area */}
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>Filters</Typography>
+      <Paper sx={{ 
+        p: 3,
+        borderRadius: 2,
+        bgcolor: 'white',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+      }}>
+        <Typography variant="h6" gutterBottom sx={{ color: '#1a237e', fontWeight: 600 }}>
+          Filters
+        </Typography>
         <Box
           ref={setFilterRef}
           sx={{
             minHeight: 100,
             p: 2,
             border: '2px dashed',
-            borderColor: 'divider',
-            borderRadius: 1,
-            bgcolor: '#f5f5f5',
+            borderColor: 'rgba(0,0,0,0.1)',
+            borderRadius: 2,
+            bgcolor: '#fafafa',
             display: 'flex',
-            flexDirection: 'column',
-            gap: 2
+            flexWrap: 'wrap',
+            gap: 2,
+            transition: 'all 0.2s',
+            '&:hover': {
+              borderColor: 'primary.main',
+              bgcolor: 'rgba(25, 118, 210, 0.04)'
+            }
           }}
         >
           {currentDashboard.filters.map((filter) => (
-            <Paper key={filter.id} sx={{ p: 2, position: 'relative' }}>
+            <Paper 
+              key={filter.id}
+              sx={{ 
+                width: 'calc(33.33% - 16px)',
+                p: 2,
+                position: 'relative',
+                borderRadius: 2,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                '&:hover': {
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  transform: 'translateY(-2px)'
+                },
+                transition: 'all 0.2s'
+              }}
+            >
               <IconButton
                 size="small"
-                sx={{ position: 'absolute', top: 8, right: 8 }}
+                sx={{ 
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  color: 'grey.500',
+                  '&:hover': {
+                    color: 'error.main',
+                    bgcolor: 'error.light'
+                  }
+                }}
                 onClick={() => handleFilterDelete(filter.id)}
               >
                 <DeleteIcon />
@@ -95,7 +135,14 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
             </Paper>
           ))}
           {currentDashboard.filters.length === 0 && (
-            <Typography color="text.secondary" align="center">
+            <Typography 
+              color="text.secondary" 
+              align="center" 
+              sx={{ 
+                width: '100%',
+                py: 4
+              }}
+            >
               Drag and drop filters here
             </Typography>
           )}
@@ -103,27 +150,62 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
       </Paper>
 
       {/* Chart Drop Area */}
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>Charts</Typography>
+      <Paper sx={{ 
+        p: 3,
+        borderRadius: 2,
+        bgcolor: 'white',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+      }}>
+        <Typography variant="h6" gutterBottom sx={{ color: '#1a237e', fontWeight: 600 }}>
+          Charts
+        </Typography>
         <Box
           ref={setChartRef}
           sx={{
             minHeight: 100,
             p: 2,
             border: '2px dashed',
-            borderColor: 'divider',
-            borderRadius: 1,
-            bgcolor: '#f5f5f5',
+            borderColor: 'rgba(0,0,0,0.1)',
+            borderRadius: 2,
+            bgcolor: '#fafafa',
             display: 'flex',
-            flexDirection: 'column',
-            gap: 2
+            flexWrap: 'wrap',
+            gap: 2,
+            transition: 'all 0.2s',
+            '&:hover': {
+              borderColor: 'primary.main',
+              bgcolor: 'rgba(25, 118, 210, 0.04)'
+            }
           }}
         >
           {currentDashboard.charts.map((chart) => (
-            <Paper key={chart.id} sx={{ p: 2, position: 'relative' }}>
+            <Paper 
+              key={chart.id}
+              sx={{ 
+                width: 'calc(50% - 16px)',
+                p: 2,
+                position: 'relative',
+                borderRadius: 2,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                '&:hover': {
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  transform: 'translateY(-2px)'
+                },
+                transition: 'all 0.2s'
+              }}
+            >
               <IconButton
                 size="small"
-                sx={{ position: 'absolute', top: 8, right: 8 }}
+                sx={{ 
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  color: 'grey.500',
+                  '&:hover': {
+                    color: 'error.main',
+                    bgcolor: 'error.light'
+                  }
+                }}
                 onClick={() => handleRemoveChart(chart.id)}
               >
                 <DeleteIcon />
@@ -133,7 +215,7 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
                 value={chart}
                 onChange={(updates) => handleChartChange(chart.id, updates)}
               />
-              <Box sx={{ mt: 2 }}>
+              <Box sx={{ mt: 3 }}>
                 <ChartComponent
                   type={chart.type}
                   title={chart.title}
@@ -144,7 +226,14 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
             </Paper>
           ))}
           {currentDashboard.charts.length === 0 && (
-            <Typography color="text.secondary" align="center">
+            <Typography 
+              color="text.secondary" 
+              align="center"
+              sx={{ 
+                width: '100%',
+                py: 4
+              }}
+            >
               Drag and drop charts here
             </Typography>
           )}
@@ -154,7 +243,16 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
       <Button 
         variant="contained" 
         onClick={onSave}
-        sx={{ alignSelf: 'flex-start' }}
+        sx={{ 
+          alignSelf: 'flex-start',
+          px: 4,
+          py: 1.5,
+          borderRadius: 2,
+          bgcolor: '#1a237e',
+          '&:hover': {
+            bgcolor: '#0d47a1'
+          }
+        }}
       >
         Save Dashboard
       </Button>
