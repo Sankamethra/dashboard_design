@@ -1,17 +1,23 @@
-import { Box, Paper, Typography, Button, Grid } from '@mui/material';
+import { Box, Paper, Typography, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import ChartComponent from './ChartComponent';
 import DynamicForm from './DynamicForm';
+import { useState } from 'react';
 
 function ViewDashboard({ dashboard, onEdit }) {
-  const handleFilterChange = (key, value) => {
-    // Handle filter value changes if needed
-    console.log(`Filter ${key} changed to:`, value);
+  const [filterValues, setFilterValues] = useState(dashboard.filters);
+
+  const handleFilterChange = (filterId, value) => {
+    setFilterValues(prev => prev.map(filter => 
+      filter.id === filterId 
+        ? { ...filter, value } 
+        : filter
+    ));
   };
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, p: 2, overflow: 'auto' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h5">{dashboard.title}</Typography>
         <Button
           variant="outlined"
@@ -22,14 +28,11 @@ function ViewDashboard({ dashboard, onEdit }) {
         </Button>
       </Box>
 
-      {dashboard.filters.length > 0 && (
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="h6" gutterBottom>Filters</Typography>
-          <DynamicForm 
-            filters={dashboard.filters}
-            onFilterChange={handleFilterChange}
-          />
-        </Paper>
+      {filterValues.length > 0 && (
+        <DynamicForm 
+          filters={filterValues}
+          onFilterChange={handleFilterChange}
+        />
       )}
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
