@@ -150,4 +150,116 @@ export const applyFilters = (data, filters) => {
     }
     return true;
   });
+};
+
+// Sample data endpoints
+const SAMPLE_ENDPOINTS = {
+  sales: {
+    url: '/api/sales',
+    data: [
+      { month: 'Jan', sales: 100, revenue: 150 },
+      { month: 'Feb', sales: 200, revenue: 250 },
+      { month: 'Mar', sales: 150, revenue: 200 },
+      { month: 'Apr', sales: 300, revenue: 350 },
+      { month: 'May', sales: 250, revenue: 300 },
+      { month: 'Jun', sales: 400, revenue: 450 }
+    ]
+  },
+  categories: {
+    url: '/api/categories',
+    data: [
+      { category: 'Electronics', value: 30 },
+      { category: 'Clothing', value: 25 },
+      { category: 'Books', value: 15 },
+      { category: 'Food', value: 30 }
+    ]
+  },
+  products: {
+    url: '/api/products',
+    data: [
+      { name: 'Product A', sales: 100, stock: 50 },
+      { name: 'Product B', sales: 150, stock: 30 },
+      { name: 'Product C', sales: 80, stock: 60 },
+      { name: 'Product D', sales: 200, stock: 20 }
+    ]
+  }
+};
+
+// Mock API interceptor
+axios.interceptors.request.use(async (config) => {
+  // Check if this is a sample endpoint
+  const endpoint = Object.values(SAMPLE_ENDPOINTS).find(e => 
+    config.url.includes(e.url)
+  );
+
+  if (endpoint) {
+    // Return mock data
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          ...config,
+          data: endpoint.data,
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: config
+        });
+      }, 500); // Simulate network delay
+    });
+  }
+
+  return config;
+});
+
+export const getSampleEndpoints = () => {
+  return Object.entries(SAMPLE_ENDPOINTS).map(([key, value]) => ({
+    name: key,
+    url: `http://localhost:3000${value.url}`,
+    description: `Sample ${key} data`
+  }));
+};
+
+export const fetchDashboards = async () => {
+  try {
+    const response = await axios.get('http://localhost:3001/dashboards');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching dashboards:', error);
+    throw error;
+  }
+};
+
+export const fetchDashboardById = async (id) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/dashboards/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching dashboard:', error);
+    throw error;
+  }
+};
+
+// Configure axios defaults
+axios.defaults.baseURL = 'http://localhost:3001';
+
+// Add a response interceptor for debugging
+axios.interceptors.response.use(
+  response => {
+    console.log('API Response:', {
+      url: response.config.url,
+      data: response.data
+    });
+    return response;
+  },
+  error => {
+    console.error('API Error:', {
+      url: error.config?.url,
+      error: error.message
+    });
+    return Promise.reject(error);
+  }
+);
+
+export default {
+  getSampleEndpoints
 }; 

@@ -2,8 +2,9 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divide
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
-function LeftSideMenu({ selectedTab, setSelectedTab, dashboards, onNewDashboard, onViewDashboard }) {
+function LeftSideMenu({ selectedTab, setSelectedTab, dashboards, onNewDashboard, onViewDashboard, onImport }) {
   return (
     <Box sx={{ 
       width: 260,
@@ -27,6 +28,28 @@ function LeftSideMenu({ selectedTab, setSelectedTab, dashboards, onNewDashboard,
             </ListItemIcon>
             <ListItemText 
               primary="New Dashboard"
+              primaryTypographyProps={{ 
+                fontSize: '0.9rem',
+                fontWeight: 500
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton 
+            onClick={onImport}
+            sx={{
+              borderRadius: 1,
+              mb: 1,
+              '&:hover': { bgcolor: '#f5f5f5' }
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 40, color: '#1976d2' }}>
+              <CloudDownloadIcon />
+            </ListItemIcon>
+            <ListItemText 
+              primary="Import Dashboard"
               primaryTypographyProps={{ 
                 fontSize: '0.9rem',
                 fontWeight: 500

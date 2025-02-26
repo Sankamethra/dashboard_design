@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Snackbar } from '@mui/material';
+import { Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 import { DndContext, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { v4 as uuidv4 } from 'uuid';
 import LeftSideMenu from './LeftSideMenu';
@@ -8,12 +8,13 @@ import RightSideArea from './RightSideArea';
 import ManageDashboards from './ManageDashboards';
 import ViewDashboard from './ViewDashboard';
 import { filterComponents } from '../config/componentConfig';
+import { fetchDashboards } from '../services/api';
+import axios from 'axios';
 
 function DashboardDesigner() {
   const emptyDashboard = {
     id: null,
     title: '',
-    apiUrl: '',
     filters: [],
     charts: []
   };
@@ -25,6 +26,8 @@ function DashboardDesigner() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isViewMode, setIsViewMode] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [importUrl, setImportUrl] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -33,6 +36,48 @@ function DashboardDesigner() {
       },
     })
   );
+
+  const handleImportDashboard = async () => {
+    try {
+      const response = await axios.get(importUrl);
+      const dashboardData = response.data;
+      
+      // If the data is nested in a 'data' property, extract it
+      const data = dashboardData.data || dashboardData;
+      
+      // Log the received data to help debug
+      console.log('Received data:', data);
+
+      // If we're getting a single dashboard from the array, take the first one
+      const dashboardToImport = Array.isArray(data) ? data[0] : data;
+
+      // Create new dashboard with imported data
+      const newDashboard = {
+        id: uuidv4(),
+        title: dashboardToImport.title || 'Imported Dashboard',
+        filters: dashboardToImport.filters || [],
+        charts: dashboardToImport.charts || []
+      };
+
+      // Log the dashboard we're about to create
+      console.log('Creating dashboard:', newDashboard);
+
+      setDashboards(prev => [...prev, newDashboard]);
+      setSnackbarMessage('Dashboard imported successfully');
+      setOpenSnackbar(true);
+      setImportDialogOpen(false);
+      setImportUrl('');
+      setSelectedTab(1); // Switch to manage dashboards view
+    } catch (error) {
+      console.error('Error importing dashboard:', error);
+      // More detailed error message
+      const errorMessage = error.response 
+        ? `Import failed: ${error.response.status} - ${error.response.statusText}`
+        : 'Failed to import dashboard. Please check the URL and try again.';
+      setError(errorMessage);
+      setOpenSnackbar(true);
+    }
+  };
 
   const handleNewDashboard = () => {
     setCurrentDashboard({...emptyDashboard});
@@ -276,14 +321,52 @@ function DashboardDesigner() {
           dashboards={dashboards}
           onNewDashboard={handleNewDashboard}
           onViewDashboard={handleViewDashboard}
+          onImport={() => setImportDialogOpen(true)}
         />
         {renderContent()}
+
+        <Dialog 
+          open={importDialogOpen} 
+          onClose={() => setImportDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Import Dashboard</DialogTitle>
+          <DialogContent>
+            <Box sx={{ mt: 2 }}>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="API Endpoint URL"
+                fullWidth
+                variant="outlined"
+                value={importUrl}
+                onChange={(e) => setImportUrl(e.target.value)}
+                placeholder="Enter the dashboard API endpoint URL"
+                helperText="Use http://localhost:3001/dashboards to import all dashboards or http://localhost:3001/dashboards/1 for a specific one"
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setImportDialogOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={handleImportDashboard} 
+              variant="contained"
+              disabled={!importUrl}
+            >
+              Import
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Snackbar
           open={openSnackbar}
           autoHideDuration={3000}
-          onClose={() => setOpenSnackbar(false)}
-          message={snackbarMessage}
+          onClose={() => {
+            setOpenSnackbar(false);
+            setError(null);
+          }}
+          message={error || snackbarMessage}
         />
       </Box>
     </DndContext>

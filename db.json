@@ -1,0 +1,89 @@
+{
+  "dashboards": [
+    {
+      "id": "1",
+      "title": "Sales Dashboard",
+      "filters": [
+        {
+          "id": "f1",
+          "type": "dateRange",
+          "label": "Date Range",
+          "key": "dateRange",
+          "value": null,
+          "config": {
+            "placeholder": "Select date range",
+            "required": true
+          }
+        },
+        {
+          "id": "f2",
+          "type": "select",
+          "label": "Category",
+          "key": "category",
+          "value": "",
+          "config": {
+            "options": ["Electronics", "Clothing", "Books"],
+            "placeholder": "Select category",
+            "required": true
+          }
+        }
+      ],
+      "charts": [
+        {
+          "id": "c1",
+          "type": "line",
+          "title": "Monthly Sales",
+          "data": [
+            { "month": "Jan", "sales": 100 },
+            { "month": "Feb", "sales": 200 },
+            { "month": "Mar", "sales": 150 },
+            { "month": "Apr", "sales": 300 }
+          ],
+          "config": {
+            "xAxisLabel": "Month",
+            "yAxisLabel": "Sales",
+            "xAxisKey": "month",
+            "lines": [{ "key": "sales", "label": "Sales" }]
+          }
+        },
+        {
+          "id": "c2",
+          "type": "pie",
+          "title": "Category Distribution",
+          "data": [
+            { "name": "Electronics", "value": 30 },
+            { "name": "Clothing", "value": 40 },
+            { "name": "Books", "value": 30 }
+          ],
+          "config": {
+            "labelKey": "name",
+            "valueKey": "value"
+          }
+        }
+      ]
+    }
+  ],
+  "salesData": {
+    "data": [
+      { "month": "Jan", "sales": 100, "revenue": 150 },
+      { "month": "Feb", "sales": 200, "revenue": 250 },
+      { "month": "Mar", "sales": 150, "revenue": 200 },
+      { "month": "Apr", "sales": 300, "revenue": 350 }
+    ]
+  },
+  "categoryData": {
+    "data": [
+      { "name": "Electronics", "value": 30 },
+      { "name": "Clothing", "value": 40 },
+      { "name": "Books", "value": 30 }
+    ]
+  },
+  "productData": {
+    "data": [
+      { "category": "A", "value": 100 },
+      { "category": "B", "value": 200 },
+      { "category": "C", "value": 150 },
+      { "category": "D", "value": 300 }
+    ]
+  }
+} 

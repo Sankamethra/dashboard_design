@@ -83,19 +83,6 @@ function RightSideArea({ currentDashboard, setCurrentDashboard }) {
             value={currentDashboard.title}
             onChange={(e) => setCurrentDashboard(prev => ({ ...prev, title: e.target.value }))}
             sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': {
-                bgcolor: '#fff'
-              }
-            }}
-          />
-          <TextField
-            fullWidth
-            size="small"
-            label="API Endpoint URL"
-            value={currentDashboard.apiUrl}
-            onChange={(e) => setCurrentDashboard(prev => ({ ...prev, apiUrl: e.target.value }))}
-            sx={{ 
               '& .MuiOutlinedInput-root': {
                 bgcolor: '#fff'
               }

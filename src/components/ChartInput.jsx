@@ -1,4 +1,4 @@
-import { Box, TextField, Button, Typography, Paper, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, TextField, Button, Typography, Paper } from '@mui/material';
 import { useState } from 'react';
 
 function ChartInput({ type, value, onChange }) {
@@ -52,7 +52,7 @@ function ChartInput({ type, value, onChange }) {
         />
       </Box>
 
-      <Typography variant="subtitle2" gutterBottom>Add Data Points</Typography>
+      <Typography variant="subtitle2" gutterBottom>Add Data Point</Typography>
       <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
         <TextField
           label="X Value"
@@ -138,110 +138,13 @@ function ChartInput({ type, value, onChange }) {
 
   const renderBarChartInputs = () => (
     <Box>
-      <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-        <TextField
-          label="X-Axis Label"
-          value={value.config?.xAxisLabel || ''}
-          onChange={(e) => onChange({
-            ...value,
-            config: { ...value.config, xAxisLabel: e.target.value }
-          })}
-          size="small"
-          fullWidth
-        />
-        <TextField
-          label="Y-Axis Label"
-          value={value.config?.yAxisLabel || ''}
-          onChange={(e) => onChange({
-            ...value,
-            config: { ...value.config, yAxisLabel: e.target.value }
-          })}
-          size="small"
-          fullWidth
-        />
-      </Box>
-
-      <Typography variant="subtitle2" gutterBottom>Add Data Points</Typography>
-      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-        <TextField
-          label="Category"
-          value={dataPoint.x}
-          onChange={(e) => setDataPoint({ ...dataPoint, x: e.target.value })}
-          size="small"
-        />
-        <TextField
-          label="Value"
-          type="number"
-          value={dataPoint.y}
-          onChange={(e) => setDataPoint({ ...dataPoint, y: e.target.value })}
-          size="small"
-        />
-        <Button variant="outlined" onClick={handleAddDataPoint}>
-          Add Bar
-        </Button>
-      </Box>
-
-      <Typography variant="subtitle2" gutterBottom>Current Bars</Typography>
-      {value.data?.map((point, index) => (
-        <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
-          <Typography>
-            {point[value.config.xAxisKey]}: {point[value.config.bars[0].key]}
-          </Typography>
-          <Button 
-            size="small" 
-            color="error"
-            onClick={() => {
-              const newData = value.data.filter((_, i) => i !== index);
-              onChange({ ...value, data: newData });
-            }}
-          >
-            Remove
-          </Button>
-        </Box>
-      ))}
+      {renderLineChartInputs()}
     </Box>
   );
 
   const renderDonutChartInputs = () => (
     <Box>
-      <Typography variant="subtitle2" gutterBottom>Add Donut Segments</Typography>
-      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-        <TextField
-          label="Label"
-          value={piePoint.label}
-          onChange={(e) => setPiePoint({ ...piePoint, label: e.target.value })}
-          size="small"
-        />
-        <TextField
-          label="Value"
-          type="number"
-          value={piePoint.value}
-          onChange={(e) => setPiePoint({ ...piePoint, value: e.target.value })}
-          size="small"
-        />
-        <Button variant="outlined" onClick={handleAddPiePoint}>
-          Add Segment
-        </Button>
-      </Box>
-
-      <Typography variant="subtitle2" gutterBottom>Current Segments</Typography>
-      {value.data?.map((point, index) => (
-        <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
-          <Typography>
-            {point[value.config.labelKey]}: {point[value.config.valueKey]}%
-          </Typography>
-          <Button 
-            size="small" 
-            color="error"
-            onClick={() => {
-              const newData = value.data.filter((_, i) => i !== index);
-              onChange({ ...value, data: newData });
-            }}
-          >
-            Remove
-          </Button>
-        </Box>
-      ))}
+      {renderPieChartInputs()}
     </Box>
   );
 
