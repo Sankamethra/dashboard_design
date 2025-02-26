@@ -7,6 +7,7 @@ import MiddleArea from './MiddleArea';
 import RightSideArea from './RightSideArea';
 import ManageDashboards from './ManageDashboards';
 import ViewDashboard from './ViewDashboard';
+import { filterComponents } from '../config/componentConfig';
 
 function DashboardDesigner() {
   const emptyDashboard = {
@@ -48,31 +49,35 @@ function DashboardDesigner() {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
+
     if (!over) return;
 
-    const draggedId = active.id;
+    // Handle filter drops
+    if (over.id === 'filterDestination') {
+      const draggedFilter = filterComponents.find(f => f.id === active.id);
+      if (draggedFilter) {
+        const newFilter = {
+          id: uuidv4(),
+          type: draggedFilter.type,
+          label: '',
+          key: draggedFilter.key,
+          value: '',
+          config: {
+            ...(draggedFilter.type === 'select' && { options: [''] }),
+            ...(draggedFilter.type === 'radio' && { options: [''] })
+          }
+        };
 
-    if (draggedId.startsWith('filter-') && over.id === 'filterDestination') {
-      const filterType = draggedId.replace('filter-', '');
-      const newFilter = {
-        id: uuidv4(),
-        type: filterType,
-        label: '',
-        key: '',
-        value: filterType === 'dateRange' ? { start: null, end: null } : null
-      };
-
-      setCurrentDashboard(prev => ({
-        ...prev,
-        filters: [...prev.filters, newFilter]
-      }));
-      
-      setSnackbarMessage(`Added ${filterType} filter`);
-      setOpenSnackbar(true);
+        setCurrentDashboard(prev => ({
+          ...prev,
+          filters: [...prev.filters, newFilter]
+        }));
+      }
     }
 
-    if (draggedId.startsWith('chart-') && over.id === 'chartDestination') {
-      const chartType = draggedId.replace('chart-', '');
+    // Handle chart drops
+    if (over.id === 'chartDestination') {
+      const chartType = active.id.replace('chart-', '');
       const newChart = {
         id: uuidv4(),
         type: chartType,
@@ -96,6 +101,31 @@ function DashboardDesigner() {
   const handleSave = () => {
     if (!currentDashboard.title) {
       setError('Please enter a dashboard title');
+      return;
+    }
+
+    // Updated filter validation
+    const isFiltersValid = currentDashboard.filters.every(filter => {
+      // Basic validation for all filters
+      if (!filter.label) return false;
+
+      // Specific validation based on filter type
+      switch (filter.type) {
+        case 'select':
+        case 'radio':
+          return filter.config?.options && filter.config.options.length > 0 && 
+                 filter.config.options.every(option => option.trim() !== '');
+        case 'input':
+        case 'switch':
+        case 'dateRange':
+          return true; // These don't need additional validation
+        default:
+          return true;
+      }
+    });
+
+    if (!isFiltersValid) {
+      setError('Please fill in all required filter fields (labels and options)');
       return;
     }
 

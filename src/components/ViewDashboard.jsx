@@ -1,11 +1,12 @@
-import { Box, Paper, Typography, Button } from '@mui/material';
+import { Box, Paper, Typography, Button, Grid } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import FilterInput from './FilterInput';
 import ChartComponent from './ChartComponent';
+import DynamicForm from './DynamicForm';
 
 function ViewDashboard({ dashboard, onEdit }) {
-  const handleFilterChange = () => {
-    // No-op function since we're in view mode
+  const handleFilterChange = (key, value) => {
+    // Handle filter value changes if needed
+    console.log(`Filter ${key} changed to:`, value);
   };
 
   return (
@@ -24,22 +25,10 @@ function ViewDashboard({ dashboard, onEdit }) {
       {dashboard.filters.length > 0 && (
         <Paper sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>Filters</Typography>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            {dashboard.filters.map((filter) => (
-              <Box key={filter.id} sx={{ minWidth: 200 }}>
-                <Typography variant="subtitle2">{filter.label}</Typography>
-                <FilterInput
-                  type={filter.type}
-                  value={filter.value}
-                  label={filter.label}
-                  onChange={handleFilterChange}
-                  onLabelChange={handleFilterChange}
-                  onKeyChange={handleFilterChange}
-                  disabled={true}
-                />
-              </Box>
-            ))}
-          </Box>
+          <DynamicForm 
+            filters={dashboard.filters}
+            onFilterChange={handleFilterChange}
+          />
         </Paper>
       )}
 

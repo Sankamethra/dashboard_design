@@ -31,7 +31,7 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
     }));
   };
 
-  const handleRemoveFilter = (filterId) => {
+  const handleFilterDelete = (filterId) => {
     setCurrentDashboard(prev => ({
       ...prev,
       filters: prev.filters.filter(f => f.id !== filterId)
@@ -65,35 +65,39 @@ function MiddleArea({ currentDashboard, setCurrentDashboard, onSave, error }) {
           sx={{
             minHeight: 100,
             p: 2,
-            bgcolor: 'background.default',
             border: '2px dashed',
-            borderColor: 'grey.300',
-            borderRadius: 1
+            borderColor: 'divider',
+            borderRadius: 1,
+            bgcolor: '#f5f5f5',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
           }}
         >
           {currentDashboard.filters.map((filter) => (
-            <Paper
-              key={filter.id}
-              elevation={1}
-              sx={{ mb: 2, p: 2, position: 'relative' }}
-            >
+            <Paper key={filter.id} sx={{ p: 2, position: 'relative' }}>
               <IconButton
                 size="small"
-                onClick={() => handleRemoveFilter(filter.id)}
-                sx={{ position: 'absolute', right: 8, top: 8 }}
+                sx={{ position: 'absolute', top: 8, right: 8 }}
+                onClick={() => handleFilterDelete(filter.id)}
               >
                 <DeleteIcon />
               </IconButton>
               <FilterInput
                 type={filter.type}
-                value={filter.value}
+                value={filter}
+                onChange={(updates) => handleFilterChange(filter.id, updates)}
                 label={filter.label}
-                onLabelChange={(label) => handleFilterChange(filter.id, { label })}
-                onKeyChange={(key) => handleFilterChange(filter.id, { key })}
-                onChange={(value) => handleFilterChange(filter.id, { value })}
+                onLabelChange={(newLabel) => handleFilterChange(filter.id, { label: newLabel })}
+                onKeyChange={(newKey) => handleFilterChange(filter.id, { key: newKey })}
               />
             </Paper>
           ))}
+          {currentDashboard.filters.length === 0 && (
+            <Typography color="text.secondary" align="center">
+              Drag and drop filters here
+            </Typography>
+          )}
         </Box>
       </Paper>
 
